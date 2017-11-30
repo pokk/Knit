@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "one.no.taiwan.knit"
+        applicationId "taiwan.no.one.knit"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
