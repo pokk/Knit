@@ -32,10 +32,8 @@ class KnitProcessor : AbstractProcessor() {
 
     override fun process(set: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         roundEnv.getElementsAnnotatedWith(KnitBuilder::class.java).forEach {
-            println("------------------------------------")
             val cls = genParts.genWrapperClass(it)
             val func = genParts.genDSLFunction(it)
-
 
             FileSpec.builder(utils.getPackageOf(it).toString(), "Knit${it.simpleName}").run {
                 func.zip(cls).forEach {
@@ -45,7 +43,6 @@ class KnitProcessor : AbstractProcessor() {
                 build()
             }.run {
                 writeTo(System.out)
-                println("\n------------------------------------")
                 writeTo(File(processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]))
             }
         }
