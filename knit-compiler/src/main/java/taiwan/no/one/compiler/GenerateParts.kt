@@ -25,18 +25,18 @@ class GenerateParts(private val element: Elements) {
         val className = "${it.toString().split(".").last()}Wrapper"
         val interfaceElement = element.getTypeElement(it.toString())
         val methods = interfaceElement.enclosedElements.map {
-            val params = ((it as ExecutableElement).parameters).map { it.asType().asTypeName().correct() }
-
+            val params = (it as ExecutableElement).parameters.map { it.asType().asTypeName().correct() }.toTypedArray()
             PropertySpec.builder(it.simpleName.toString(),
-                LambdaTypeName.get(parameters = params, returnType = Unit::class.asTypeName()).asNullable()).run {
+                                 LambdaTypeName.get(parameters = *params,
+                                                    returnType = Unit::class.asTypeName()).asNullable()).run {
                 initializer("null")
                 mutable(true)
             }.build()
         }
 
-        TypeSpec.classBuilder(className).run {
-            addProperties(methods)
-        }.build()
+        TypeSpec.classBuilder(className)
+            .run { addProperties(methods) }
+            .build()
     }
 
     /**
@@ -53,8 +53,8 @@ class GenerateParts(private val element: Elements) {
 //                addCode("return wrapper.%N?.invoke(%N) ?: Unit",
 //                    it.simpleName.toString(),
 //                    it.parameters.joinToString()).build()
-
             val funcParams = (it as ExecutableElement).parameters.map {
+                println(it.asType().asTypeName())
                 ParameterSpec.builder(it.toString(), it.asType().asTypeName().correct()).build()
             }
 
@@ -68,13 +68,14 @@ class GenerateParts(private val element: Elements) {
         FunSpec.builder(it.toString().split(".").last().decapitalize()).run {
             returns(it.asTypeName())
             addParameter(ParameterSpec.builder("wrapperListener",
-                LambdaTypeName.get(receiver = name, returnType = Unit::class.asTypeName().correct())).build())
+                                               LambdaTypeName.get(receiver = name,
+                                                                  returnType = Unit::class.asTypeName().correct())).build())
             addCode("""return object : %N {
                     |    %N
                     |    ${overrideFunc.joinToString("\n\toverride ", "override ")}
                     |}""".trimMargin(),
-                it.asTypeName().toString().split(".").last(),
-                wrapperVariable.toString())
+                    it.asTypeName().toString().split(".").last(),
+                    wrapperVariable.toString())
         }.build()
     }
 }

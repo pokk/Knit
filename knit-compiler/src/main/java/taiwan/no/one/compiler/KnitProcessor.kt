@@ -38,11 +38,12 @@ class KnitProcessor : AbstractProcessor() {
             FileSpec.builder(utils.getPackageOf(it).toString(), "Knit${it.simpleName}").run {
                 func.zip(cls).forEach {
                     addFunction(it.first)
+                    println(it.second.toString())
                     addType(it.second)
                 }
                 build()
             }.run {
-                writeTo(System.out)
+                    //                writeTo(System.out)
                 writeTo(File(processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]))
             }
         }

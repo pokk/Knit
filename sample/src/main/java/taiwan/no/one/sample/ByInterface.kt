@@ -5,5 +5,5 @@ package taiwan.no.one.sample
  * @since   2017/12/01
  */
 interface ByInterface {
-    fun onClickAir(times: Double)
+    fun onClickAir(times: Double, sss: String, bbb: Int)
 }
